@@ -38,8 +38,8 @@ def message_actions():
     verify_slack_token(form_json["token"])
     print(form_json["response_url"])
     r = requests.post(form_json["response_url"], json={'text': "Aaight",
-        "token": form_json["token"], "channel": form_json["channel"]["id"]},
-                      headers={'Content-Type': 'application/json'})
+        "token": form_json["token"], "channel": form_json["channel"]["id"],
+        "replace_original": False}, headers={'Content-Type': 'application/json'})
     print(r.text)
     return make_response("", 200)
 
