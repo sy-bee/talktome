@@ -50,11 +50,9 @@ def message_actions():
 
     # Verify that the request came from Slack
     verify_slack_token(form_json["token"])
-    print(form_json["response_url"])
     r = requests.post(form_json["response_url"], json={'text': "Aaight",
         "token": form_json["token"], "channel": form_json["channel"]["id"],
         "replace_original": False}, headers={'Content-Type': 'application/json'})
-    print(r.text)
     return make_response("", 200)
 
 # Create an event listener for "reaction_added" events and print the emoji name
