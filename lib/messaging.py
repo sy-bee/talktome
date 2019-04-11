@@ -61,11 +61,9 @@ class SlackWorker(object):
         Returns a dict with ticket id and a message if a ticket needs to ne updated.
         """
         # delete all actions
-        #if 'message' in json_data and not 'blocks' in json_data:
-        #    json_data['blocks'] = [json_data['message']]
         logging.debug("incoming %s", json_data)
-        #json_data['blocks'] = [
-        #    block for block in json_data['blocks'] if block['type'] != "actions"]
+        no_button_blocks = [
+            block for block in json_data['message']['blocks'] if block['type'] != "actions"]
         #requests.post(json_data["response_url"], json={'blocks': json_data['blocks'],
         #    "token": json_data["token"], "channel": json_data["channel"]["id"],
         #    "replace_original": True}, headers={'Content-Type': 'application/json'})
@@ -73,18 +71,19 @@ class SlackWorker(object):
         actions = json_data['actions'][0]
         ticket_id = actions['value']
         action_id = actions['action_id']
+        channel_id = json_data['container']['channel_id']
+        message_ts = json_data['container']['message_ts']
+        self.client.api_call("chat.update", channel=channel_id, ts=message_ts,
+                             blocks=no_button_blocks)
         current_step = self.recurse_workflow(self.workflow, action_id)
-        json_new = {"token": json_data["token"], "channel": json_data["channel"]["id"],
-                    "replace_original": False}
         update_ticket = {}
         if "choices" in current_step:
-            json_new['blocks'] = self.build_blocks(current_step['message'], current_step['choices'],
+            blocks = self.build_blocks(current_step['message'], current_step['choices'],
                                                    ticket_id)
+            self.send_block_message(channel_id, blocks)
         elif "update_ticket" in current_step:
-            json_new['text'] = current_step['message']
             update_ticket[ticket_id] = current_step["update_ticket"]
-        requests.post(json_data["response_url"], json=json_new,
-                      headers={'Content-Type': 'application/json'})
+            self.send_text_message(channel_id, current_step['message'])
         return update_ticket
 
     def recurse_workflow(self, step, key):
