@@ -44,7 +44,7 @@ class ZenWorker(object):
             # check if it's open and there's a cmment from a human
             if ticket['status'] == 'open' and comments.get("count", 0) > 1:  #and
                     #comments['comments'][-1].get('author_id') != self.me['id']):
-                logging.info("last comment in ticket %s is made by a human", str(ticket['id']))
+                logging.info("ticket %s is open and has comments", str(ticket['id']))
                 continue
             # get the user, barcode and ticket id
             user_match = self.username_re.search(ticket['description'])
