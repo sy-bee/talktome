@@ -2,7 +2,7 @@
 # Choice keys need to be unique to ensure correct step is found
 --- 
 label: "Out of date workflow root"
-search: "tags:corpeng_primary_remediation out of date status:open status:new group:support"
+search: "tags:corpeng_primary_remediation out of date status:open status:new group:support:support"
 message: |-
     Hi! 1 or more of your computers have not checked into our systems in the last 30 days.
     The computer with asset {barcode} is not checking in.

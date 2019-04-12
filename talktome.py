@@ -58,24 +58,6 @@ def message_actions():
             talk_core[block['block_id']].message_actions(json_data)
     return make_response("", 200)
 
-# Create an event listener for "reaction_added" events and print the emoji name
-@slack_events_adapter.on("reaction_added")
-def reaction_added(event_data):
-    emoji = event_data["event"]["reaction"]
-    channel = event_data["event"]["item"]["channel"]
-    slack_client.api_call("chat.postMessage", channel=channel, text="Cheers for :{}:".format(emoji))
-
-@slack_events_adapter.on("message")
-def app_home(event_data):
-    verify_slack_token(event_data["token"])
-    if not "text" in event_data["event"]:
-        return
-    text = event_data["event"]["text"]
-    channel = event_data["event"]["channel"]
-    if "joke" in text:
-        slack_client.api_call("chat.postMessage", channel=channel,
-            text="He was so narrow-minded he could see through a keyhole with both eyes.")
-
 @app.route("/")
 def hello():
     return "Go away!"
